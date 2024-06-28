@@ -17,5 +17,19 @@
 
 #contactForm button[type="submit"]:hover {
     background-color: #9370db;
-    /* Lighter shade of purple on hover */
 }
+ .btn-light {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+.btn-light i {
+    font-size: 24px;
+    color: white;
+    margin: 0 10px;
+}
+
+.btn-light:hover i {
+    color: #b457b9;
+}       

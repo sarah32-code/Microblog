@@ -15,4 +15,4 @@ Microblog is a lightweight blogging platform with basic CRUD operations for post
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/your-username/microbloglite.git
-   cd microbloglite
+   cd microblog

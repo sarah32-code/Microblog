@@ -5,9 +5,12 @@ body {
 }
 
 header {
-    background: linear-gradient(to right, #9370db, #6a5acd);    color: #fff;
-    padding: 15px;
+    background: linear-gradient(to right, #c6acfe, #b0b7fe);
+    color: #fff;
+    padding: 5px;
     text-align: center;
+    height: fit-content;
+    font-size: 14px;
 }
 
 h1,
@@ -62,8 +65,7 @@ button:hover {
 }
 
 .navbar {
-    background: linear-gradient(to right, #9370db, #6a5acd);
-}
+    background: linear-gradient(to right, #c6acfe, #b0b7fe);}
 
 .navbar-brand,
 .navbar-nav .nav-link {
@@ -82,12 +84,13 @@ button:hover {
 .nav-link:hover {
     color: #8d798e;
 }
-
 footer {
-    background: linear-gradient(to bottom, #6a5acd, #9370db);
+    background: linear-gradient(to right, #c6acfe, #b0b7fe);
     color: #fff;
     text-align: center;
-    padding: 10px 0;
+    padding: 5px 0;
+    font-size: 14px;
+ 
 }
 .custom-register {
     background: linear-gradient(to bottom, #a897ed, #4121a1);
