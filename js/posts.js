@@ -1,10 +1,9 @@
-
-
 "use strict";
 
 document.addEventListener("DOMContentLoaded", function () {
     const postForm = document.querySelector("#postForm");
     const postsList = document.querySelector("#postsList");
+    let posts = []; // Initialize posts array
 
     postForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -20,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const loginData = getLoginData(); 
+        const loginData = getLoginData();
         const postData = {
             text: postText,
         };
@@ -58,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to fetch posts from API
     function loadPosts() {
-        const loginData = getLoginData(); 
+        const loginData = getLoginData();
         const options = {
             method: "GET",
             headers: {
@@ -91,8 +90,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function displayPosts() {
         postsList.innerHTML = '';
 
-        const currentUser = getCurrentUser(); 
-
         posts.forEach(post => {
             const postDiv = document.createElement('div');
             postDiv.classList.add('post');
@@ -107,96 +104,111 @@ document.addEventListener("DOMContentLoaded", function () {
             const likeBtn = document.createElement('button');
             likeBtn.textContent = 'Like';
             likeBtn.classList.add('btn', 'btn-sm', 'btn-outline-primary', 'me-2');
-            likeBtn.addEventListener('click', () => likePost(post._id));
+            likeBtn.addEventListener('click', () => handleLike(post._id));
 
             const unlikeBtn = document.createElement('button');
             unlikeBtn.textContent = 'Unlike';
             unlikeBtn.classList.add('btn', 'btn-sm', 'btn-outline-danger', 'me-2');
-            unlikeBtn.addEventListener('click', () => unlikePost(post._id));
+            unlikeBtn.addEventListener('click', () => handleUnlike(post._id));
 
             const likesSpan = document.createElement('span');
-            likesSpan.textContent = `Likes: ${post.likes.length}`;
+            likesSpan.textContent = `Likes: ${post.likes ? post.likes.length : 0}`; // Check if post.likes is defined
 
             // Append elements to postDiv
             postDiv.appendChild(postText);
             postDiv.appendChild(userInfo);
-            postDiv.appendChild(likeBtn);
-            postDiv.appendChild(unlikeBtn);
-            postDiv.appendChild(likesSpan);
 
+            // Conditionally add like or unlike button based on post.liked property
+            if (post.liked) {
+                postDiv.appendChild(unlikeBtn);
+            } else {
+                postDiv.appendChild(likeBtn);
+            }
+
+            postDiv.appendChild(likesSpan);
             postsList.appendChild(postDiv);
         });
     }
 
-    // Function to like a post
-    function likePost(postId) {
-        const post = posts.find(p => p._id === postId);
-        if (post && !post.liked) {
-            const loginData = getLoginData(); 
-            const likeData = {
-                postId: postId
-            };
+    // Function to handle liking a post
+    function handleLike(postId) {
+        const loginData = getLoginData();
+        const likeData = {
+            postId: postId
+        };
 
-            const options = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${loginData.token}`,
-                },
-                body: JSON.stringify(likeData),
-            };
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${loginData.token}`,
+            },
+            body: JSON.stringify(likeData),
+        };
 
-            fetch("http://microbloglite.us-east-2.elasticbeanstalk.com/api/likes", options)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Failed to like post on server");
-                    }
-                    return response.json();
-                })
-                .then(like => {
-                    post.likes.push(like); 
-                    post.liked = true;
-                    savePosts(posts); // Save posts to localStorage
-                    displayPosts(); 
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("Failed to like post on server. Please try again.");
-                });
-        }
+        fetch("http://microbloglite.us-east-2.elasticbeanstalk.com/api/likes", options)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to like post");
+                }
+                return response.json();
+            })
+            .then(like => {
+                const index = posts.findIndex(post => post._id === postId);
+                if (index !== -1) {
+                    posts[index].likes.push(like);
+                    posts[index].liked = true;
+                    savePosts(posts); // Save updated posts locally
+                    displayPosts(); // Update UI to reflect changes
+                } else {
+                    throw new Error("Post not found in local data");
+                }
+            })
+            .catch(error => {
+                console.error("Error liking post:", error);
+                alert("Failed to like post. Please try again.");
+            });
     }
 
-    // Function to unlike a post
-    function unlikePost(postId) {
+    // Function to handle unliking a post
+    function handleUnlike(postId) {
+        const loginData = getLoginData();
         const post = posts.find(p => p._id === postId);
-        if (post && post.liked) {
-            const likeId = post.likes.find(like => like.postId === postId)._id;
-            const loginData = getLoginData(); 
 
-            const options = {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${loginData.token}`,
-                },
-            };
+        if (post) {
+            const like = post.likes.find(like => like.userId === loginData.userId);
 
-            fetch(`http://microbloglite.us-east-2.elasticbeanstalk.com/api/likes/${likeId}`, options)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Failed to unlike post on server");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    post.likes = post.likes.filter(like => like._id !== likeId);
-                    post.liked = false;
-                    savePosts(posts); // Save posts to localStorage
-                    displayPosts(); 
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("Failed to unlike post on server. Please try again.");
-                });
+            if (like) {
+                const likeId = like._id;
+                const options = {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${loginData.token}`,
+                    },
+                };
+
+                fetch(`http://microbloglite.us-east-2.elasticbeanstalk.com/api/likes/${likeId}`, options)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Failed to unlike post");
+                        }
+                        return response.json();
+                    })
+                    .then(() => {
+                        post.likes = post.likes.filter(like => like._id !== likeId);
+                        post.liked = false;
+                        savePosts(posts); // Save updated posts locally
+                        displayPosts(); // Update UI to reflect changes
+                    })
+                    .catch(error => {
+                        console.error("Error unliking post:", error);
+                        alert("Failed to unlike post. Please try again.");
+                    });
+            } else {
+                console.error("Error: Like not found for the current user on this post.");
+            }
+        } else {
+            console.error("Error: Post not found.");
         }
     }
 
@@ -205,25 +217,30 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem('posts', JSON.stringify(posts));
     }
 
-    // Function to fetch posts from localStorage or initialize if not present
-    function fetchPosts() {
-        let storedPosts = localStorage.getItem('posts');
-        return storedPosts ? JSON.parse(storedPosts) : [];
-    }
-
-    // Function to get current user 
-    function getCurrentUser() {
-        
-        
-        return {
-            username: "sm" // Example username
-        };
-    }
-
-    // Initial load of posts
-    let posts = fetchPosts();
-    displayPosts();
-
     // Initial load of posts from API
     loadPosts();
+
+    // Function to sort posts by date posted (createdAt)
+    function sortByDatePosted() {
+        posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        displayPosts(); // Update UI with sorted posts
+    }
+
+    // Event listener for sorting by date posted button
+    document.getElementById('sortByDatePostedBtn').addEventListener('click', sortByDatePosted);
+
+    // Function to sort posts by username
+    function sortByUsername() {
+        posts.sort((a, b) => {
+            const usernameA = a.username.toLowerCase();
+            const usernameB = b.username.toLowerCase();
+            if (usernameA < usernameB) return -1;
+            if (usernameA > usernameB) return 1;
+            return 0;
+        });
+        displayPosts(); // Update UI with sorted posts
+    }
+
+    // Event listener for sorting by username button
+    document.getElementById('sortByUsernameBtn').addEventListener('click', sortByUsername);
 });

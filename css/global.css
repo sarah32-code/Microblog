@@ -1,18 +1,11 @@
-/* Body and general styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #e6e6fa;
-    /* Lavender color for background */
+    background: linear-gradient(to bottom, #e6e6fa, #ffffff);
     color: #4b0082;
-    /* Dark purple color for text */
 }
 
-/* Headers and main titles */
 header {
-    background-color: #9370db;
-    /* Medium purple for header background */
-    color: #fff;
-    /* White text color */
+    background: linear-gradient(to right, #9370db, #6a5acd);    color: #fff;
     padding: 15px;
     text-align: center;
 }
@@ -23,25 +16,19 @@ h3,
 h4,
 h5,
 h6 {
-    color: #6a5acd;
-    /* Lilac color for headings */
+    color: #f2f1fa;
 }
 
-/* Links */
 a {
     color: #800080;
-    /* Dark magenta for links */
     text-decoration: none;
     transition: color 0.3s ease;
-    /* Smooth color transition on hover */
 }
 
 a:hover {
     color: #9932cc;
-    /* Lighter magenta on hover */
 }
 
-/* Forms and inputs */
 form {
     margin-bottom: 20px;
 }
@@ -53,8 +40,7 @@ textarea {
     width: 100%;
     padding: 10px;
     margin: 5px 0 10px 0;
-    border: 1px solid #9370db;
-    /* Medium purple border for inputs */
+    border: 1px solid #faf8fe;
     border-radius: 5px;
     box-sizing: border-box;
 }
@@ -64,55 +50,55 @@ input[type="file"] {
 }
 
 button {
-    background-color: #6a5acd;
-    /* Lilac button background */
+    background-color: linear-gradient(to bottom, #a897ed, #4121a1);
     color: #fff;
-    border: none;
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
 }
 
 button:hover {
-    background-color: #9370db;
-    /* Medium purple on button hover */
+    background: linear-gradient(to bottom, #9370db, #c4bee8);
 }
 
-/* Navbar */
 .navbar {
-    background-color: #9370db;
-    /* Medium purple navbar */
+    background: linear-gradient(to right, #9370db, #6a5acd);
 }
 
 .navbar-brand,
 .navbar-nav .nav-link {
-    color: #9370db;
-    /* White text color for navbar links */
+    color: #fff;
 }
 
 .navbar-toggler {
-    border-color: #9370db;
-    /* White border color for toggler icon */
+    border-color: #fff;
 }
 
 .nav-link {
-    color: #9370db; 
-    /* Important to override default link colors */
+    color: #fff;
     transition: color 0.3s ease;
-    /* Smooth color transition on hover */
 }
 
 .nav-link:hover {
-    color: #ddd;
-    /* Lighter color on hover */
+    color: #8d798e;
 }
 
-/* Footer */
 footer {
-    background-color: #6a5acd;
-    /* Lilac footer background */
+    background: linear-gradient(to bottom, #6a5acd, #9370db);
     color: #fff;
-    /* White text color */
     text-align: center;
     padding: 10px 0;
+}
+.custom-register {
+    background: linear-gradient(to bottom, #a897ed, #4121a1);
+    color: #fff;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.custom-register:hover {
+    background: linear-gradient(to bottom, #9370db, #c4bee8);
 }
